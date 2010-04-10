@@ -1,0 +1,12 @@
+#search_terms a, #search_terms a:visited{
+	text-decoration: none;
+}
+#search_terms span, #search_terms img{
+	margin-right: 10px;
+}
+
+#search_terms img{
+	border: 0 none;
+	width: 20px;
+	height: 20px;
+}
