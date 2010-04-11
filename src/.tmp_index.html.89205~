@@ -11,20 +11,22 @@
 		<input type="search" name="search" id="search" />
 		<input type="submit" id="search_submit" />
 	</form>
-	<ul class="label">
-		<li>
-			<input type="checkbox" id="yahoo-check" name="yahoo" checked="checked" value="" />
-			<label for="yahoo-check">Yahoo! Search</label>
-		</li>
-		<li>
-			<input type="checkbox" id="flickr-check" name="flickr" value="" />
-			<label for="flickr-check">Flickr</label>
-		</li>
-		<li>
-			<input type="checkbox" name="upcoming" value="" />
-			<label for="flickr">Upcoming</label>
-		</li>
-	</ul>
+	<div class="label">
+		<ul>
+			<li>
+				<input type="checkbox" id="yahoo-check" name="yahoo" checked="checked" value="" />
+				<label for="yahoo-check">Yahoo! Search</label>
+			</li>
+			<li>
+				<input type="checkbox" id="flickr-check" name="flickr" value="" />
+				<label for="flickr-check">Flickr</label>
+			</li>
+			<li>
+				<input type="checkbox" name="upcoming" value="" />
+				<label for="flickr">Upcoming</label>
+			</li>
+		</ul>
+	</div>	
 	
 	<ul id="search_terms" class="search_terms">
 	</ul>
@@ -57,36 +59,30 @@
 			var boxes = $.map($(".label").find("input[type=checkbox]").filter(":checked"),function(n,i){
 				return { "name": n.name, "container": "#" + n.name, "value": n.value };
 			});
+			var engineArr = 
 			
 			callEngine(boxes,term);
 			termBuilder.render();
 			return false;
 		});
-        
-        var boxes = function(){
-            return $.map($(".label").find("input[type=checkbox]").filter(":checked"), function(n, i){
-                return {
-                    "name": n.name,
-                    "container": "#" + n.name,
-                    "value": n.value
-                };
-            })
-        };
 		
+		var boxes = $.map($(".label").find("input[type=checkbox]").filter(":checked"),function(n,i){
+			return { "name": n.name, "container": "#" + n.name, "value": n.value };
+		});
 		
-		
-		var searchBox = $("#search"),
-			checkboxes = $("ul.label").find("input[type=checkbox]");
-			
 		$("#search_terms").delegate('li','mousedown',function(ev){
 			var classString = [],
 				engineArr;
-			checkboxes.attr('checked',false);
-			$.each( $("img", this).filter(".show") , function(n,i){
-				checkboxes.filter("[name=" + i.className.replace(/term-image|show|\s/g,'') + ']').attr('checked',true);
+			engineArr = $.map( $(".yahoo, .flickr", this).filter(".show") , function(n,i){
+				console.log(i)
+				return /yahoo|flickr/.exec(n.className);
 			});
-			searchBox.val(this.className);
-			callEngine(boxes(), this.className);
+			console.log(engineArr);
+			$.each(engineArr,function(n,i){
+				console.log( $("#" + i + "-check"))
+				$("#" + i + "-check").attr('checked','checked');
+			});
+			callEngine(engineArr, this.className);
 			return false;
 		});
 		
@@ -105,6 +101,9 @@
 			});
 		}
 		
+		term = 'tree';
+		callEngine(boxes,term);
+		termBuilder.render();
 	</script>
 </body>
 </html>

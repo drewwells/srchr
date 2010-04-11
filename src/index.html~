@@ -105,6 +105,9 @@
 			});
 		}
 		
+		term = 'tree';
+		callEngine(boxes(),term);
+		termBuilder.render();
 	</script>
 </body>
 </html>
