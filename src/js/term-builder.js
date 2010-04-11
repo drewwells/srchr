@@ -38,17 +38,66 @@ var termBuilder = (function(){
 	 * I handle updating the term window on the front end
 	 */
 	var updateDisplay = function(){
-		var item = '';
-		var html = [];
-		
-		while (item = queue.pop()) {
-			html.push('<li><span>');
-			html.push(item);
-			html.push('</span><a href=""><img class="yahoo" src="images/yahoo.jpg"/></a><a href=""><img class="flickr" src="images/flickr.jpg" /></a></li>');
+		var item = ''
+			name = '',
+			html = [],
+			listItem = '';
+		queue.unique();
+		while ( item = queue.pop()  ) {
+			//console.log(item)
+			if( $.isArray(currentTerms[item]) && !liHandle.children("." + item).get().length ){
+				html.push('<li class="');
+				html.push( item );
+				html.push('" ><span>');
+				html.push( item );
+				html.push('</span>');
+				
+				html.push('<a href="#"><img class="term-image ');
+				html.push( "yahoo" );
+				html.push('" src="images/');
+				html.push( "yahoo" );
+				html.push('.jpg"/></a>');
+				
+				html.push('<a href="#"><img class="term-image ');
+				html.push( "flickr" );
+				html.push('" src="images/');
+				html.push( "flickr" );
+				html.push('.jpg"/></a>');
+				
+				/*for( var i = 0; i < currentTerms[item].length ; ++i ){
+					name = currentTerms[item][i].toLowerCase();
+					html.push('<a href=""><img class="');
+					html.push( name );
+					html.push('" src="images/');
+					html.push( name );
+					html.push('.jpg"/></a>');
+				}*/
+				html.push('</li>');
+			}
+			else{
+			 //listItem = liHandle.children("." + item);
+			 //for( var i =0; i< )
+			}
 		}
-		liHandle.html(html.join(''));
+		liHandle.append( html.join('') );
+		updateImages();
 	};
 	
+	// Hide/show search links
+	var updateImages = function(){
+		var prop = '',
+			classString = '';
+		//liHandle
+		for( prop in currentTerms ){
+			if( currentTerms.hasOwnProperty( prop ) ){
+				classString = currentTerms[ prop ].join(', .').toLowerCase();
+				classString = "." + classString;
+				console.log( classString );
+				$( classString, liHandle ).addClass('show');
+			}
+		}
+	}
+	//Extract the name from the engine
 	var engineName = function(engine){
 		if (typeof engine["name"] === 'undefined') {
 			throw new Error("Invalid engine interface detected name not found.")
@@ -73,9 +122,10 @@ var termBuilder = (function(){
 			if( !currentTerms.hasOwnProperty(term)  ){
 				currentTerms[term] = [];
 			}
-			queue.push(term);
-			currentTerms[term].push(system);
-			currentTerms[term] = currentTerms[term].unique();
+			if( queue.indexOf(term) < 0 )
+				queue.push(term);
+			if( currentTerms[term].indexOf(system) < 0)
+				currentTerms[term].push(system);
 		},
 		// @term - search term
 		// @system - yahoo/flickr/other
@@ -96,7 +146,6 @@ var termBuilder = (function(){
 		},
 		getTerms: function(engine){
 			var system = engineName(engine);
-      
 			return currentTerms[system];
 		},
 		render: updateDisplay

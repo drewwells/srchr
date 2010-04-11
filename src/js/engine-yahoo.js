@@ -10,16 +10,13 @@ yahooEngine.search = function(term){
 		}
 		else {
 			query = data.query; //populate the query object with results.result[] and other elements stored in data.query
-			
-			
-			//that.resultCache[term] = query; //put query object into cache
-			//that.displayResults(query);
-			console.log(query);
+			that.resultCache[term] = query; //put query object into cache
+			that.displayResults(query);
 		}
 	}
 	if( !that.hasOwnProperty('resultCache') ) that.resultCache = {};
 	if (that.resultCache.hasOwnProperty(term)) {
-		that.displayResults(resultCache[term]);
+		that.displayResults(that.resultCache[term]);
 	}
 	else {
 		$.yql("SELECT * FROM search.web WHERE query = '" + text + "'", queryCallback);

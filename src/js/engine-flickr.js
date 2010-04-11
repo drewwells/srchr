@@ -16,7 +16,7 @@ flickrEngine.search = function(term){
 	}
 	if( !that.hasOwnProperty('resultCache') ) that.resultCache = {};
 	if (that.resultCache.hasOwnProperty(term)) {
-		that.displayResults(resultCache[term]);
+		that.displayResults(that.resultCache[term]);
 	}
 	else {
 		
@@ -30,6 +30,6 @@ flickrEngine.search = function(term){
 	}
 	
 }
-yahooEngine.name = 'FLICKR';		
+flickrEngine.name = 'FLICKR';		
 
 
