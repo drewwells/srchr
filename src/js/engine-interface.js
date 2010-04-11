@@ -20,36 +20,35 @@ var engineInterface = (function(){
 		},
 		cont: '',
 		displayResults: function(q){
+//		console.log(q);
 			var  html = [], 
 				res = q.results.result || q.results.photo,
 				$cont = $(this.cont);
-			//Normalize response
-			if( !!q.results.photo ){
-				$.each(res,function(n,i){
-					i.clickurl = "http://farm" + i.farm + ".static.flickr.com/" + i.server + "/" + i.id + "_" + i.secret + ".jpg";
-					i["abstract"] = i.title;
-					i.title = "<img src=\"" + i.clickurl + "\" />";
-					i.size = 0;
-					i.dispurl = '';
-				});
-			}	
+			$cont.addClass('show');
 				
 			if ( typeof res !== 'undefined' && $.isArray(res) ) {
 				$.each(res, function(n, i){
 					html.push('<li>');
 					html.push('<h3>');
+					if( !!i.url ){
+						html.push('<a href="');
+						html.push(i.url);
+						html.push('">');
+					}
 					html.push(i.title);
+					if( !!i.url ) {
+						html.push('</a>');
+					}
 					html.push('</h3>');
 					html.push('<div>');
 					html.push(i["abstract"])
 					html.push('</div>');
-					//html.push('<span clas=\"text\">');
-					//html.push(i.dispurl);
-					//if( i.size > 0 ){
-					//	html.push('</span> - <span>');
-					//	html.push(Math.floor(i.size / 1024));
-					//	html.push('k</span>');
-					//}
+					
+					if( !!i.special ){
+						html.push('<p>');
+						html.push( i.special );
+						html.push('</p>');
+					}
 					html.push('</li>');
 				});
 				if( !!$cont ){

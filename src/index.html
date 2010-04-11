@@ -11,7 +11,7 @@
 		<input type="search" name="search" id="search" />
 		<input type="submit" id="search_submit" />
 	</form>
-	<ul class="label">
+	<ul class="checkboxes">
 		<li>
 			<input type="checkbox" id="yahoo-check" name="yahoo" checked="checked" value="" />
 			<label for="yahoo-check">Yahoo! Search</label>
@@ -34,8 +34,12 @@
 		<li class="flickr">Flickr</li>
 	</ul>
 	<div id="search_results">
-		<ul id="yahoo"></ul>
-		<ul id="flickr"></ul>
+		<ul id="yahoo">
+			<li>No results</li>
+		</ul>
+		<ul id="flickr">
+			<li>No results</li>
+		</ul>
 	</div>
 	
 	<!-- use google-hosted javascript library of your choice -->
@@ -54,7 +58,8 @@
 		var term = termBuilder.configure('search_terms');
 		$("form").bind('submit',function(){
 			var term = $(this).children("[name=search]").val();
-			var boxes = $.map($(".label").find("input[type=checkbox]").filter(":checked"),function(n,i){
+			window.location.hash = term;
+			var boxes = $.map($(".checkboxes").find("input[type=checkbox]").filter(":checked"),function(n,i){
 				return { "name": n.name, "container": "#" + n.name, "value": n.value };
 			});
 			
@@ -63,21 +68,51 @@
 			return false;
 		});
         
-        var boxes = function(){
-            return $.map($(".label").find("input[type=checkbox]").filter(":checked"), function(n, i){
-                return {
-                    "name": n.name,
-                    "container": "#" + n.name,
-                    "value": n.value
-                };
-            })
-        };
+    var boxes = function(){
+        return $.map($(".checkboxes").find("input[type=checkbox]").filter(":checked"), function(n, i){
+            return {
+                "name": n.name,
+                "container": "#" + n.name,
+                "value": n.value
+            };
+        })
+    };
 		
 		
 		
 		var searchBox = $("#search"),
-			checkboxes = $("ul.label").find("input[type=checkbox]");
-			
+			checkboxes = $("ul.checkboxes").find("input[type=checkbox]");
+		
+
+		(function(){
+			//Manage events
+			var imgURL = '', 
+					imgTURL = '',
+					imgContainer,
+					img = '',
+					imgLink;
+			$("a.special").live('click',function(){ return false; });
+
+			$("#flickr").delegate(".special","mousedown",function(ev){
+				imgContainer = $(this).closest("li");
+				imgLink = $(this);
+				imgURL = $("h3 a", imgContainer).attr("href");
+				img = $("img",imgContainer);
+				console.log(imgLink.data("turl"));
+				if( !imgLink.data("turl") ){
+					imgTURL = img.attr("src");
+					imgLink.data("turl", imgTURL);
+
+				}				
+				imgTURL = imgLink.data("turl");
+
+				( img.attr("src") === imgURL ) ? img.attr("src",imgTURL) : img.attr("src",imgURL);
+				setTimeout(function(){},0);
+				return false;
+			});
+		}());		
+
+		
 		$("#search_terms").delegate('li','mousedown',function(ev){
 			var classString = [],
 				engineArr;
@@ -91,10 +126,10 @@
 		});
 		
 		var callEngine = function(arr,term){
-            var engines = {
-                yahoo: yahooEngine,
-                flickr: flickrEngine
-            }, 
+      var engines = {
+          yahoo: yahooEngine,
+          flickr: flickrEngine
+      }, 
 			ePtr;
 			$.each(arr,function(n,i){
 				if( engines.hasOwnProperty(i.name) ){

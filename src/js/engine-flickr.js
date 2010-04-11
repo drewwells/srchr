@@ -1,5 +1,21 @@
 var flickrEngine = Object.create(engineInterface);
-
+flickrEngine.normalizeQ = function(q){	//Normalize response
+	var imgURL = '', imgTURL = '', imgClickURL = '';
+	q.results.result = q.results.photo;
+	q.results.result = $.map(q.results.result,function(i,n){
+		imgTURL = "http://farm" + i.farm + ".static.flickr.com/" + i.server + "/" + i.id + "_" + i.secret + "_t.jpg";
+		imgURL = "http://farm" + i.farm + ".static.flickr.com/" + i.server + "/" + i.id + "_" + i.secret + ".jpg";
+		imgClickURL = "http://www.flickr.com/photos/" + i.owner + "/" + i.id + "/";
+	  //console.log(q);
+		return {
+			"url": imgURL,
+			"abstract": i.title,
+			"title": "<a href=\"" + imgClickURL + "\"><img src=\"" + imgTURL + "\" /></a>",
+			"special": '<a class="special" href="' + imgURL + '">Click to zoom</a>'
+		}
+	});
+	return q;
+},
 flickrEngine.search = function(term){
 	var that = this, text = term || 'SFO';
 	var queryCallback = function(data){
@@ -11,7 +27,7 @@ flickrEngine.search = function(term){
 		else {
 			query = data.query; //populate the query object with results.result[] and other elements stored in data.query
 			that.resultCache[term] = query; //put query object into cache
-			that.displayResults(query);
+			that.displayResults( that.normalizeQ(query) );
 		}
 	}
 	if( !that.hasOwnProperty('resultCache') ) that.resultCache = {};

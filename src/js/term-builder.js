@@ -44,7 +44,6 @@ var termBuilder = (function(){
 			listItem = '';
 		queue.unique();
 		while ( item = queue.pop()  ) {
-			//console.log(item)
 			if( $.isArray(currentTerms[item]) && !liHandle.children("." + item).get().length ){
 				html.push('<li class="');
 				html.push( item );
@@ -92,8 +91,7 @@ var termBuilder = (function(){
 			if( currentTerms.hasOwnProperty( prop ) ){
 				classString = currentTerms[ prop ].join(', .').toLowerCase();
 				classString = "." + classString;
-				console.log( classString );
-				$( classString, liHandle ).addClass('show');
+				liHandle.find("." + prop.toLowerCase()).find(classString).addClass('show');
 			}
 		}
 	}
